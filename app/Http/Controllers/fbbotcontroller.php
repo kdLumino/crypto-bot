@@ -18,6 +18,9 @@ class fbbotcontroller extends Controller
   
         if( !empty($payload) ){
             if( !empty($payload['postback']['payload']) ){
+
+                 file_put_contents("php://stderr", "one");
+
                 if($payload['postback']['payload'] == 'get'){
                     $this->defaultTextMessage($id, $payload['postback']['payload']);
                 }else if($payload['postback']['payload'] == 'get_exchange'){
@@ -28,20 +31,22 @@ class fbbotcontroller extends Controller
                     $this->unSubscribeMarketTextMessage($id, $payload['postback']['payload']);
                 }
             }else if(!empty($payload['message']['quick_reply'])) {
+
+                file_put_contents("php://stderr", "two");
+
                 if($payload['message']['quick_reply']['payload'] == 'market_subscribe'){
                     $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if($payload['message']['quick_reply']['payload'] == 'no_subscribe'){
                     $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
-                          $kd = json_encode($payload['postback']['payload']);
-         file_put_contents("php://stderr", "$kd");
                     $this->defaultTextMessage($id, $payload['postback']['payload']);
                 }else{
                     $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
                 }
             }else{
-                
+                file_put_contents("php://stderr", "three");
                 if (Cache::has('marketBaseQuote')) {
+                     file_put_contents("php://stderr", "four");
                         $senderMessage = $data["entry"][0]["messaging"][0]['message'];
                         $this->marketBaseCurrency($id, $senderMessage['text']);
                     }else{
