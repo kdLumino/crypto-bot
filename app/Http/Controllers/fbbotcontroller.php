@@ -19,8 +19,6 @@ class fbbotcontroller extends Controller
         if( !empty($payload) ){
             if( !empty($payload['postback']['payload']) ){
 
-                 
-
                 if($payload['postback']['payload'] == 'get'){
                     $this->defaultTextMessage($id, $payload['postback']['payload']);
                 }else if($payload['postback']['payload'] == 'get_exchange'){
@@ -32,15 +30,14 @@ class fbbotcontroller extends Controller
                 }
             }else if(!empty($payload['message']['quick_reply'])) {
 
-               file_put_contents("php://stderr", "two");
-               $kd = $payload['message']['quick_reply']['payload'];
-               file_put_contents("php://stderr", "$kd");
-
                 if($payload['message']['quick_reply']['payload'] == 'market_subscribe'){
                     $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if($payload['message']['quick_reply']['payload'] == 'no_subscribe'){
                     $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
+                                   file_put_contents("php://stderr", "one");
+               $kd = $payload['message']['quick_reply']['payload'];
+               file_put_contents("php://stderr", "$kd   ");
                     $this->defaultTextMessage($id, $payload['postback']['payload']);
                 }else{
                     $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
