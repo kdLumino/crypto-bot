@@ -19,7 +19,7 @@ class fbbotcontroller extends Controller
         if( !empty($payload) ){
             if( !empty($payload['postback']['payload']) ){
 
-                 file_put_contents("php://stderr", "one");
+                 
 
                 if($payload['postback']['payload'] == 'get'){
                     $this->defaultTextMessage($id, $payload['postback']['payload']);
@@ -32,7 +32,9 @@ class fbbotcontroller extends Controller
                 }
             }else if(!empty($payload['message']['quick_reply'])) {
 
-                file_put_contents("php://stderr", "two");
+               file_put_contents("php://stderr", "two");
+               $kd = $payload['message']['quick_reply']['payload'];
+               file_put_contents("php://stderr", "$kd");
 
                 if($payload['message']['quick_reply']['payload'] == 'market_subscribe'){
                     $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
@@ -44,9 +46,9 @@ class fbbotcontroller extends Controller
                     $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
                 }
             }else{
+
                 file_put_contents("php://stderr", "three");
                 if (Cache::has('marketBaseQuote')) {
-                     file_put_contents("php://stderr", "four");
                         $senderMessage = $data["entry"][0]["messaging"][0]['message'];
                         $this->marketBaseCurrency($id, $senderMessage['text']);
                     }else{
