@@ -120,14 +120,27 @@ class fbbotcontroller extends Controller
     	Cache::pull('marketBaseQuote');
         $user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
-		
+        $subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
+        $temparray = [];
+        if($subscribe){
+            $temp['type'] = 'postback';
+            $temp['title'] = 'See Your Markets!';
+            $temp['payload'] = 'subscribe_list';
+            array_push($temparray,$temp);
+        }
+        $temp['type'] = 'postback';
+        $temp['title'] = 'Pick Our Exchanges!';
+        $temp['payload'] = 'get_exchange';
+        array_push($temparray,$temp);
+            
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		    /*initialize curl*/
 		    $ch = curl_init($url);
 	       		       /*prepare response*/
-			    $jsonData = '{
-			    "recipient":{
-			        "id":"' . $recipientId . '"
+		    		/*prepare response*/
+			        $jsonData = '{
+			        "recipient":{
+			        	"id":"' . $recipientId . '"
 			        },
 			        "message":{
 				    "attachment":{
@@ -144,13 +157,7 @@ class fbbotcontroller extends Controller
 				              "url": "https://lz-bot.herokuapp.com",
 				              "webview_height_ratio": "tall",
 				            },
-				            "buttons":[
-				              {
-				                "type":"postback",
-				                "title":"Pick Our Exchanges!",
-				                "payload":"get_exchange"
-				              }              
-				            ]      
+				            "buttons": '.json_encode( $temparray ).'
 				          }
 				        ]
 				      }
