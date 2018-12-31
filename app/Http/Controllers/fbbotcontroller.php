@@ -15,11 +15,9 @@ class fbbotcontroller extends Controller
  public function callback(Request $request){
         $data = $request->all();
         
-    	$kd = json_encode($data['entry'][0]['changes'][0]['field']);
-    	file_put_contents( "php://stderr","$kd");
-
     	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
-    
+            	$kd = json_encode($marketsarr);
+    	file_put_contents( "php://stderr","$kd");
 	        
 	        $payload = $data['entry'][0]['messaging'][0];
 	        $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
