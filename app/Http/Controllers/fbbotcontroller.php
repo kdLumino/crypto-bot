@@ -9,19 +9,20 @@ use App\Exchanges;
 use App\SubscribeMarket;
 use Cache;
 
-class fbbotcontroller extends Controller
-{
+class botmanController extends Controller
+{  
+    public function callback(Request $request){
 
- public function callback(Request $request){
-        $data = $request->all();
-        
+    	$data = $request->all();
     	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
-            	$kd = json_encode($marketsarr);
-    	file_put_contents( "php://stderr","$kd");
+    
 	        
 	        $payload = $data['entry'][0]['messaging'][0];
-	        $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
-
+            $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
+            
+	          $kd = json_encode($payload);
+            file_put_contents( "php://stderr","$kd");
+            
 	        if( !empty($payload) ){
 	        	if( !empty($payload['postback']['payload']) ){
 		        	if($payload['postback']['payload'] == 'get'){
@@ -75,7 +76,7 @@ class fbbotcontroller extends Controller
 			  "greeting":[
 				  {
 				    "locale":"default",
-				    "text":"Hello dsdsdsdsds!"
+				    "text":"Hello {{user_first_name}}!"
 				  }
 				]
 			}';
@@ -624,5 +625,4 @@ class fbbotcontroller extends Controller
 	        return $marketsBaseCurrencyArr;  
         }
     }
-
 }
