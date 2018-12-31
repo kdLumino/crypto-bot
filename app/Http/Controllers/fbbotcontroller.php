@@ -6,6 +6,8 @@ use view;
 use App\Exchanges;
 use App\SubscribeMarket;
 use Cache;
+use Config;
+
 class fbbotcontroller extends Controller
 {
  public function callback(Request $request){
@@ -13,45 +15,44 @@ class fbbotcontroller extends Controller
         
     	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
 
-
-	        
-	        $payload = $data['entry'][0]['messaging'][0];
-	        $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
-	        if( !empty($payload) ){
-	        	if( !empty($payload['postback']['payload']) ){
-		        	if($payload['postback']['payload'] == 'get'){
-		        		$this->defaultTextMessage($id, $payload['postback']['payload']);
-		        	}else if($payload['postback']['payload'] == 'get_exchange'){
-		        		$this->exchangeTextMessage($id, $payload['postback']['payload']);
-		        	}else if($payload['postback']['payload'] == 'subscribe_list'){
-		        		$this->exchangeTextMessage($id, $payload['postback']['payload']);
-		        	}else{
-		        		$this->unSubscribeMarketTextMessage($id, $payload['postback']['payload']);
-		        	}
-	        	}else if(!empty($payload['message']['quick_reply'])) {
-	        		if($payload['message']['quick_reply']['payload'] == 'market_subscribe'){
-	        			$this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
-	        		}else if($payload['message']['quick_reply']['payload'] == 'no_subscribe'){
-	        			$this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
-	        		}else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
-	        			$this->defaultTextMessage($id, $payload['postback']['payload']);
-	        		}else{
-	                  $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
-	        		}
-	        	}else{
-	        		
-	        		if (Cache::has('marketBaseQuote')) {
-						   $senderMessage = $data["entry"][0]["messaging"][0]['message'];
-	        	           $this->marketBaseCurrency($id, $senderMessage['text']);
-						}else{
-						  $senderMessage = $data["entry"][0]["messaging"][0]['message'];
-	        	          $this->sendWelcomeMessage($id, $senderMessage['text']);
-						}
-	        	}
-	        }
-	        $this->getGrettingText();
-	        $this->getStarted();  
+        $payload = $data['entry'][0]['messaging'][0];
+        $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
+        if( !empty($payload) ){
+            if( !empty($payload['postback']['payload']) ){
+                if($payload['postback']['payload'] == 'get'){
+                    $this->defaultTextMessage($id, $payload['postback']['payload']);
+                }else if($payload['postback']['payload'] == 'get_exchange'){
+                    $this->exchangeTextMessage($id, $payload['postback']['payload']);
+                }else if($payload['postback']['payload'] == 'subscribe_list'){
+                    $this->exchangeTextMessage($id, $payload['postback']['payload']);
+                }else{
+                    $this->unSubscribeMarketTextMessage($id, $payload['postback']['payload']);
+                }
+            }else if(!empty($payload['message']['quick_reply'])) {
+                if($payload['message']['quick_reply']['payload'] == 'market_subscribe'){
+                    $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
+                }else if($payload['message']['quick_reply']['payload'] == 'no_subscribe'){
+                    $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
+                }else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
+                    $this->defaultTextMessage($id, $payload['postback']['payload']);
+                }else{
+                    $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
+                }
+            }else{
+                
+                if (Cache::has('marketBaseQuote')) {
+                        $senderMessage = $data["entry"][0]["messaging"][0]['message'];
+                        $this->marketBaseCurrency($id, $senderMessage['text']);
+                    }else{
+                        $senderMessage = $data["entry"][0]["messaging"][0]['message'];
+                        $this->sendWelcomeMessage($id, $senderMessage['text']);
+                    }
+            }
+        }
+        $this->getGrettingText();
+        $this->getStarted();  
     }
+
     private function getUserDetails($recipientId){
     	$ch = curl_init('https://graph.facebook.com/'.$recipientId.'?access_token='. env("PAGE_ACCESS_TOKEN"));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -425,26 +426,73 @@ class fbbotcontroller extends Controller
 		    $ch = curl_init($url);
 			
 			if( $messageText == 'market_subscribe' ){
-				SubscribeMarket::create([
+
+
+            $max_sub_mrkt =  Config::get('markets.sub_market_number');
+            $subscribe = SubscribeMarket::where('user_id', '2950844664941572')->get()->toArray();
+          
+            if( count($subscribe) >= $max_sub_mrkt){
+
+                SubscribeMarket::create([
 					'user_id' => $recipientId, 
 					'exchange_name' => $exchange_id,
 					'market_quoteid' => $marketQuoteId, 
 					'market_baseid' => strtoupper($marketBaseid),  
 					'market_symbol' => $marketsymbol, 
 					'market_price'=> $lastPrice
-				  ]);
+                ]);
+                $jsonData = '{
+                    "recipient":{
+                        "id":"' . $recipientId . '"
+                        },
+                        "message":{
+                            "text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal! You have only subscribe three (3) markets in free version. if you want more markets subscriptions apply for paid version!",
+                                "quick_replies": [
+							    	{
+							    		"content_type": "text",
+							    		"title": "PAID",
+							    		"payload": "paid_version",
+							    		"image_url": "https://via.placeholder.com/150"
+							    	},
+							    	{
+							    		"content_type": "text",
+							    		"title": "NO",
+							    		"payload": "no_subscribe",
+							    		"image_url": "https://via.placeholder.com/150"
+							    	}
+							    ]
+                            }
+                    }';
+            }else{
+                $jsonData = '{
+                "recipient":{
+                    "id":"' . $recipientId . '"
+                    },
+                    "message":{
+                        "text": "Thanks for Connecting Us. You have already applied Maximum (3) markets in version. if you want more markets subscriptions apply for paid version!",
+                       "quick_replies": [
+							    	{
+							    		"content_type": "text",
+							    		"title": "PAID",
+							    		"payload": "paid_version",
+							    		"image_url": "https://via.placeholder.com/150"
+							    	},
+							    	{
+							    		"content_type": "text",
+							    		"title": "NO",
+							    		"payload": "no_subscribe",
+							    		"image_url": "https://via.placeholder.com/150"
+							    	}
+							    ]
+                        }
+                }';
+            }   
+
 				Cache::pull('marketBaseQuote');
 		    	Cache::pull('marketExchangeId');
 		    	Cache::pull('marketBaseId');
 		    	Cache::pull('marketBaselastPrice');
-		        $jsonData = '{
-					    "recipient":{
-					        "id":"' . $recipientId . '"
-					        },
-					        "message":{
-							    "text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal!",
-							  }
-					    }';
+		
 			}else{
 			   $jsonData = '{
 				    "recipient":{
