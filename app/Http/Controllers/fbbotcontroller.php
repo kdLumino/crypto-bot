@@ -13,8 +13,7 @@ class fbbotcontroller extends Controller
         
     	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
 
-        $kd = json_enocde(env("SUB_MARKET_NUM"));
-         file_put_contents("php://stderr", "$kd");
+
 	        
 	        $payload = $data['entry'][0]['messaging'][0];
 	        $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
@@ -167,10 +166,10 @@ class fbbotcontroller extends Controller
             curl_close($ch);
     }
     private function exchangeTextMessage($recipientId, $messageText){
+
+        $this->sendAction($recipientId);
         $user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
-        
-
         
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		    /*initialize curl*/
@@ -246,7 +245,8 @@ class fbbotcontroller extends Controller
             curl_close($ch);
     }
     private function marketTextMessage($recipientId, $messageText){
- 
+        
+        $this->sendAction($recipientId);
     	$user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
 	    	$exchange_id = 'kraken';
@@ -334,6 +334,8 @@ class fbbotcontroller extends Controller
             curl_close($ch);
     }
     private function marketBaseCurrency($recipientId, $messageText){
+
+        $this->sendAction($recipientId);
     	$marketQuoteId = Cache::get('marketBaseQuote');
     	$exchange_id = Cache::get('marketExchangeId');
 		$marketBaseCurrency = $this->fetchMarketBaseCurrencyArr($marketQuoteId);
@@ -404,6 +406,8 @@ class fbbotcontroller extends Controller
             curl_close($ch);
     }
     private function selectMarketMessage($recipientId, $messageText){
+
+        $this->sendAction($recipientId);
     	$user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
 		$marketQuoteId = Cache::get('marketBaseQuote');
@@ -554,6 +558,8 @@ class fbbotcontroller extends Controller
             curl_close($ch);
     }
     private function unSubscribeMarketTextMessage($recipientId, $messageText){
+
+        $this->sendAction($recipientId);
     	$user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
 		$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
