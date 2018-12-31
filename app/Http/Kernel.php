@@ -60,7 +60,8 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'fbtoken' =>  \Illuminate\Auth\Middleware\FbToken::class,
+        'fbtoken' => \App\Http\Middleware\FbToken::class,
+        
     ];
 
     /**
