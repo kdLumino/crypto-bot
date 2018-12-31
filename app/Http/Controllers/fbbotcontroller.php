@@ -14,6 +14,8 @@ class fbbotcontroller extends Controller
               //get the user’s id
         $id = $data["entry"][0]["messaging"][0]["sender"]["id"];
         $senderMessage = $data["entry"][0]["messaging"][0]["message"];
+           	$kd = json_encode($senderMessage);
+    	file_put_contents( "php://stderr","$kd");
         if(!$senderMessage){
             $this->sendTextMessage($id, "Hello");
         }
