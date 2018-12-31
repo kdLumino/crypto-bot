@@ -15,8 +15,7 @@ class fbbotcontroller extends Controller
     	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
         $payload = $data['entry'][0]['messaging'][0];
         $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
-        $kd = json_encode($payload);
-         file_put_contents("php://stderr", "$kd");
+  
         if( !empty($payload) ){
             if( !empty($payload['postback']['payload']) ){
                 if($payload['postback']['payload'] == 'get'){
@@ -34,6 +33,8 @@ class fbbotcontroller extends Controller
                 }else if($payload['message']['quick_reply']['payload'] == 'no_subscribe'){
                     $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
+                          $kd = json_encode($payload);
+         file_put_contents("php://stderr", "$kd");
                     $this->defaultTextMessage($id, $payload['postback']['payload']);
                 }else{
                     $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
