@@ -168,15 +168,17 @@ class fbbotcontroller extends Controller
         $user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
         
-  
-        file_put_contents( "php://stderr","$messageText");
+
         
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		    /*initialize curl*/
 		    $ch = curl_init($url);
 			/* prepare response */
 			if( $messageText == 'subscribe_list'){
-				$subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
+
+                $subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
+                  $kd = json_encode($subscribe);
+        file_put_contents( "php://stderr","$kd");
 				$temparray = [];
 				if($subscribe){
 					foreach ($subscribe as $key => $value) {
