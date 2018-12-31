@@ -24,9 +24,6 @@ class fbbotcontroller extends Controller
 	        $payload = $data['entry'][0]['messaging'][0];
 	        $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
 
-	          $kd = json_encode($payload);
-	        file_put_contents( "php://stderr","$kd");
-
 	        if( !empty($payload) ){
 	        	if( !empty($payload['postback']['payload']) ){
 		        	if($payload['postback']['payload'] == 'get'){
@@ -80,7 +77,7 @@ class fbbotcontroller extends Controller
 			  "greeting":[
 				  {
 				    "locale":"default",
-				    "text":"Hello {{user_first_name}}!"
+				    "text":"Hello dsdsdsdsds!"
 				  }
 				]
 			}';
