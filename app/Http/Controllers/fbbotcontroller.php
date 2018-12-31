@@ -12,8 +12,7 @@ class fbbotcontroller extends Controller
         $data = $request->all();
         
     	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
-            	$kd = json_encode($marketsarr);
-    	file_put_contents( "php://stderr","$kd");
+
 	        
 	        $payload = $data['entry'][0]['messaging'][0];
 	        $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
@@ -168,7 +167,10 @@ class fbbotcontroller extends Controller
     private function exchangeTextMessage($recipientId, $messageText){
         $user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
-	
+        
+  
+        file_put_contents( "php://stderr","$messageText");
+        
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		    /*initialize curl*/
 		    $ch = curl_init($url);
