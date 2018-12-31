@@ -13,11 +13,10 @@ class fbbotcontroller extends Controller
 {
 
  public function callback(Request $request){
-    	$data = $request->all();
+        $data = $request->all();
+        
     	$kd = json_encode($data['entry'][0]['changes'][0]['field']);
     	file_put_contents( "php://stderr","$kd");
-
-    	$this->sendWelcomeMessage($id, $senderMessage['text']);
 
     	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
     
