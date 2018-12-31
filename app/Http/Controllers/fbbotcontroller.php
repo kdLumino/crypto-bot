@@ -13,6 +13,8 @@ class fbbotcontroller extends Controller
         
     	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
 
+        $kd = json_enocde(env("SUB_MARKET_NUM"));
+         file_put_contents("php://stderr", "$kd");
 	        
 	        $payload = $data['entry'][0]['messaging'][0];
 	        $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
@@ -177,8 +179,7 @@ class fbbotcontroller extends Controller
 			if( $messageText == 'subscribe_list'){
 
                 $subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
-                  $kd = json_encode($subscribe);
-        file_put_contents( "php://stderr","$kd");
+
 				$temparray = [];
 				if($subscribe){
 					foreach ($subscribe as $key => $value) {
