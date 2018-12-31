@@ -446,7 +446,7 @@ class fbbotcontroller extends Controller
                         "id":"' . $recipientId . '"
                         },
                         "message":{
-                            "text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal! You have only subscribe three (3) markets in free version. if you want more markets subscriptions apply for paid version!",
+                            "text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal! You have only subscribe three (3) markets in free version. if you want subscribe more markets apply for paid version!",
                                 "quick_replies": [
 							    	{
 							    		"content_type": "text",
@@ -469,7 +469,7 @@ class fbbotcontroller extends Controller
                     "id":"' . $recipientId . '"
                     },
                     "message":{
-                        "text": "Thanks for Connecting Us. You have already applied Maximum (3) markets in version. if you want more markets subscriptions apply for paid version!",
+                        "text": "Thanks for Connecting Us. You have already applied Maximum (3) markets in free version. if you want subscribe more markets apply for paid version!",
                        "quick_replies": [
 							    	{
 							    		"content_type": "text",
