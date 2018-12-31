@@ -1,28 +1,22 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use view;
 use App\Exchanges;
 use App\SubscribeMarket;
 use Cache;
-
-class botmanController extends Controller
-{  
-    public function callback(Request $request){
-
-    	$data = $request->all();
+class fbbotcontroller extends Controller
+{
+ public function callback(Request $request){
+        $data = $request->all();
+        
     	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
-    
+            	$kd = json_encode($marketsarr);
+    	file_put_contents( "php://stderr","$kd");
 	        
 	        $payload = $data['entry'][0]['messaging'][0];
-            $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
-            
-	          $kd = json_encode($payload);
-            file_put_contents( "php://stderr","$kd");
-            
+	        $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
 	        if( !empty($payload) ){
 	        	if( !empty($payload['postback']['payload']) ){
 		        	if($payload['postback']['payload'] == 'get'){
@@ -76,7 +70,7 @@ class botmanController extends Controller
 			  "greeting":[
 				  {
 				    "locale":"default",
-				    "text":"Hello {{user_first_name}}!"
+				    "text":"Hello dsdsdsdsds!"
 				  }
 				]
 			}';
