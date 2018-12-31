@@ -17,6 +17,8 @@ class fbbotcontroller extends Controller
 
         $payload = $data['entry'][0]['messaging'][0];
         $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
+                       $kd = json_encode($payload);
+                         file_put_contents("php://stderr", "$kd");
 
         if( !empty($payload) ){
             if( !empty($payload['postback']['payload']) ){
@@ -46,8 +48,7 @@ class fbbotcontroller extends Controller
                         $this->marketBaseCurrency($id, $senderMessage['text']);
                     }else{
                         $senderMessage = $data["entry"][0]["messaging"][0]['message'];
-                        $kd = json_encode($senderMessage);
-                         file_put_contents("php://stderr", "$kd");
+         
                         $this->sendWelcomeMessage($id, $senderMessage['text']);
                     }
             }
