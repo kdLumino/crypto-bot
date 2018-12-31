@@ -15,8 +15,7 @@ class fbbotcontroller extends Controller
         $id = $data["entry"][0]["messaging"][0]["sender"]["id"];
         $senderMessage = $data["entry"][0]["messaging"][0]["message"];
      
-        if(!$senderMessage){
-            	file_put_contents( "php://stderr","dfdfdfddf");
+        if($senderMessage){
             $this->sendTextMessage($id, "Hello");
         }
         
