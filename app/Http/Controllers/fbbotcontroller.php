@@ -17,8 +17,7 @@ class fbbotcontroller extends Controller
 
         $payload = $data['entry'][0]['messaging'][0];
         $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
-                       $kd = json_encode($payload);
-                         file_put_contents("php://stderr", "$kd");
+    
 
         if( !empty($payload) ){
             if( !empty($payload['postback']['payload']) ){
@@ -123,7 +122,8 @@ class fbbotcontroller extends Controller
     	$this->sendAction($recipientId);
     	Cache::pull('marketBaseQuote');
         $user = $this->getUserDetails($recipientId);
-		$userdata = json_decode($user);
+        $userdata = json_decode($user);
+        
         $subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
         $temparray = [];
         if($subscribe){
@@ -136,6 +136,9 @@ class fbbotcontroller extends Controller
         $temp['title'] = 'Pick Our Exchanges!';
         $temp['payload'] = 'get_exchange';
         array_push($temparray,$temp);
+
+        $kd = json_encode($temparray);
+        file_put_contents("php://stderr", "$kd");
             
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		    /*initialize curl*/
