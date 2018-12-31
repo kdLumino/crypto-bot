@@ -7,14 +7,12 @@ use App\Exchanges;
 use App\SubscribeMarket;
 use Cache;
 use Config;
-
 class fbbotcontroller extends Controller
 {
  public function callback(Request $request){
         $data = $request->all();
         
     	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
-
         $payload = $data['entry'][0]['messaging'][0];
         $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
         if( !empty($payload) ){
@@ -52,7 +50,6 @@ class fbbotcontroller extends Controller
         $this->getGrettingText();
         $this->getStarted();  
     }
-
     private function getUserDetails($recipientId){
     	$ch = curl_init('https://graph.facebook.com/'.$recipientId.'?access_token='. env("PAGE_ACCESS_TOKEN"));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -167,7 +164,6 @@ class fbbotcontroller extends Controller
             curl_close($ch);
     }
     private function exchangeTextMessage($recipientId, $messageText){
-
         $this->sendAction($recipientId);
         $user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
@@ -177,9 +173,7 @@ class fbbotcontroller extends Controller
 		    $ch = curl_init($url);
 			/* prepare response */
 			if( $messageText == 'subscribe_list'){
-
                 $subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
-
 				$temparray = [];
 				if($subscribe){
 					foreach ($subscribe as $key => $value) {
@@ -335,7 +329,6 @@ class fbbotcontroller extends Controller
             curl_close($ch);
     }
     private function marketBaseCurrency($recipientId, $messageText){
-
         $this->sendAction($recipientId);
     	$marketQuoteId = Cache::get('marketBaseQuote');
     	$exchange_id = Cache::get('marketExchangeId');
@@ -407,7 +400,6 @@ class fbbotcontroller extends Controller
             curl_close($ch);
     }
     private function selectMarketMessage($recipientId, $messageText){
-
         $this->sendAction($recipientId);
     	$user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
@@ -426,13 +418,10 @@ class fbbotcontroller extends Controller
 		    $ch = curl_init($url);
 			
 			if( $messageText == 'market_subscribe' ){
-
-
             $max_sub_mrkt =  Config::get('markets.sub_market_number');
             $subscribe = SubscribeMarket::where('user_id', '2950844664941572')->get()->toArray();
           
             if( count($subscribe) >= $max_sub_mrkt){
-
                 SubscribeMarket::create([
 					'user_id' => $recipientId, 
 					'exchange_name' => $exchange_id,
@@ -469,7 +458,7 @@ class fbbotcontroller extends Controller
                     "id":"' . $recipientId . '"
                     },
                     "message":{
-                        "text": "Thanks for Connecting Us. You have already applied Maximum (3) markets in version. if you want subscribe more markets apply for paid version!",
+                        "text": "Thanks for Connecting Us. You have already applied Maximum (3) markets in free version. if you want subscribe more markets apply for paid version!",
                        "quick_replies": [
 							    	{
 							    		"content_type": "text",
@@ -487,7 +476,6 @@ class fbbotcontroller extends Controller
                         }
                 }';
             }   
-
 				Cache::pull('marketBaseQuote');
 		    	Cache::pull('marketExchangeId');
 		    	Cache::pull('marketBaseId');
@@ -606,7 +594,6 @@ class fbbotcontroller extends Controller
             curl_close($ch);
     }
     private function unSubscribeMarketTextMessage($recipientId, $messageText){
-
         $this->sendAction($recipientId);
     	$user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
