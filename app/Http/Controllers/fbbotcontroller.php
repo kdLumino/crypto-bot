@@ -35,9 +35,6 @@ class fbbotcontroller extends Controller
                 }else if($payload['message']['quick_reply']['payload'] == 'no_subscribe'){
                     $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
-                                   file_put_contents("php://stderr", "one");
-               $kd = $payload['message']['quick_reply']['payload'];
-               file_put_contents("php://stderr", "$kd   ");
                     $this->defaultTextMessage($id, $payload['postback']['payload']);
                 }else{
                     $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
@@ -120,6 +117,10 @@ class fbbotcontroller extends Controller
         curl_close($ch);
     }
     private function defaultTextMessage($recipientId, $messageText){
+
+                                           file_put_contents("php://stderr", "last");
+
+               file_put_contents("php://stderr", "$messageText   ");
 
     	$this->sendAction($recipientId);
     
