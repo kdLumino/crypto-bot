@@ -17,8 +17,6 @@ class fbbotcontroller extends Controller
 
         $payload = $data['entry'][0]['messaging'][0];
         $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
-    
-
         if( !empty($payload) ){
             if( !empty($payload['postback']['payload']) ){
                 if($payload['postback']['payload'] == 'get'){
@@ -47,7 +45,6 @@ class fbbotcontroller extends Controller
                         $this->marketBaseCurrency($id, $senderMessage['text']);
                     }else{
                         $senderMessage = $data["entry"][0]["messaging"][0]['message'];
-         
                         $this->sendWelcomeMessage($id, $senderMessage['text']);
                     }
             }
@@ -122,32 +119,15 @@ class fbbotcontroller extends Controller
     	$this->sendAction($recipientId);
     	Cache::pull('marketBaseQuote');
         $user = $this->getUserDetails($recipientId);
-        $userdata = json_decode($user);
-        
-        $subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
-        $temparray = [];
-        if($subscribe){
-            $temp['type'] = 'postback';
-            $temp['title'] = 'See Your Markets!';
-            $temp['payload'] = 'subscribe_list';
-            array_push($temparray,$temp);
-        }
-        $temp['type'] = 'postback';
-        $temp['title'] = 'Pick Our Exchanges!';
-        $temp['payload'] = 'get_exchange';
-        array_push($temparray,$temp);
-
-        $kd = json_encode($temparray);
-        file_put_contents("php://stderr", "$kd");
-            
+		$userdata = json_decode($user);
+		
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		    /*initialize curl*/
 		    $ch = curl_init($url);
 	       		       /*prepare response*/
-		    		/*prepare response*/
-			        $jsonData = '{
-			        "recipient":{
-			        	"id":"' . $recipientId . '"
+			    $jsonData = '{
+			    "recipient":{
+			        "id":"' . $recipientId . '"
 			        },
 			        "message":{
 				    "attachment":{
@@ -164,7 +144,13 @@ class fbbotcontroller extends Controller
 				              "url": "https://lz-bot.herokuapp.com",
 				              "webview_height_ratio": "tall",
 				            },
-				            "buttons": '.json_encode( $temparray ).'
+				            "buttons":[
+				              {
+				                "type":"postback",
+				                "title":"Pick Our Exchanges!",
+				                "payload":"get_exchange"
+				              }              
+				            ]      
 				          }
 				        ]
 				      }
@@ -483,7 +469,7 @@ class fbbotcontroller extends Controller
                     "id":"' . $recipientId . '"
                     },
                     "message":{
-                        "text": "Thanks for Connecting Us. You have already applied Maximum (3) markets in free version. if you want subscribe more markets apply for paid version!",
+                        "text": "Thanks for Connecting Us. You have already applied Maximum (3) markets in version. if you want subscribe more markets apply for paid version!",
                        "quick_replies": [
 							    	{
 							    		"content_type": "text",
