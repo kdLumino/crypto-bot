@@ -31,7 +31,7 @@ class fbbotcontroller extends Controller
                 if($payload['message']['quick_reply']['payload'] == 'market_subscribe'){
                     $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if($payload['message']['quick_reply']['payload'] == 'no_subscribe'){
-                    $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
+                    $this->defaultTextMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
                     $this->defaultTextMessage($id, $payload['postback']['payload']);
                 }else{
@@ -114,8 +114,12 @@ class fbbotcontroller extends Controller
         curl_close($ch);
     }
     private function defaultTextMessage($recipientId, $messageText){
-                                           file_put_contents("php://stderr", "last");
-               file_put_contents("php://stderr", "$messageText   ");
+
+						Cache::pull('marketBaseQuote');
+		    	Cache::pull('marketExchangeId');
+		    	Cache::pull('marketBaseId');
+		    	Cache::pull('marketBaselastPrice');
+
     	$this->sendAction($recipientId);
     
         $user = $this->getUserDetails($recipientId);
