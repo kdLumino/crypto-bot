@@ -416,19 +416,17 @@ class fbbotcontroller extends Controller
             curl_close($ch);
     }
     private function selectMarketMessage($recipientId, $messageText){
+
         $this->sendAction($recipientId);
     	$user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
 		$marketQuoteId = Cache::get('marketBaseQuote');
     	$exchange_id = Cache::get('marketExchangeId');
     	$marketBaseid = Cache::get('marketBaseId');
-    	$lastPrice = Cache::get('marketBaselastPrice');
-    	file_put_contents( "php://stderr","$marketQuoteId");
-    	file_put_contents( "php://stderr","$exchange_id");
-    	file_put_contents( "php://stderr","$marketBaseid");
-    	file_put_contents( "php://stderr","$lastPrice");
-    	$marketsymbol = strtoupper($marketBaseid).'/'.$marketQuoteId;
-		    	file_put_contents( "php://stderr","$marketsymbol");
+		$lastPrice = Cache::get('marketBaselastPrice');
+		
+		$marketsymbol = strtoupper($marketBaseid).'/'.$marketQuoteId;
+
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		    /*initialize curl*/
 		    $ch = curl_init($url);
@@ -438,44 +436,67 @@ class fbbotcontroller extends Controller
             $subscribe = SubscribeMarket::where('user_id', '2950844664941572')->get()->toArray();
           
             if( count($subscribe) < $max_sub_mrkt[0]){
-                SubscribeMarket::create([
-					'user_id' => $recipientId, 
-					'exchange_name' => $exchange_id,
-					'market_quoteid' => $marketQuoteId, 
-					'market_baseid' => strtoupper($marketBaseid),  
-					'market_symbol' => $marketsymbol, 
-					'market_price'=> $lastPrice
-				]);
-				
-				$jsonData = '{
+
+
+				$count = SubscribeMarket::where('market_symbol', '=' ,$marketsymbol)->count();
+				if($count == 1) {
+
+					$marketBaseCurrency = $this->fetchMarketBaseCurrencyArr($marketQuoteId);
+					$basecurrencyArr = json_encode( implode(',', $marketBaseCurrency) );
+					$jsonData = '{
 					"recipient":{
 						"id":"' . $recipientId . '"
 						},
 						"message":{
-							"text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal!. if you want subscribe more markets apply for paid version!",
-						"quick_replies": [
-										{
-											"content_type": "text",
-											"title": "PAID",
-											"payload": "paid_version",
-											"image_url": "https://via.placeholder.com/150"
-										},
-										{
-											"content_type": "text",
-											"title": "NO",
-											"payload": "no_subscribe",
-											"image_url": "https://via.placeholder.com/150"
-										}
-									]
-							}
+							"text": "You have already applied for this market. Please enter another market base currency. eg. like ('.trim($basecurrencyArr,'"').' )",
+						}
 					}';
+	
+				}else{
+							
+					SubscribeMarket::create([
+						'user_id' => $recipientId, 
+						'exchange_name' => $exchange_id,
+						'market_quoteid' => $marketQuoteId, 
+						'market_baseid' => strtoupper($marketBaseid),  
+						'market_symbol' => $marketsymbol, 
+						'market_price'=> $lastPrice
+					]);
+					
+					$jsonData = '{
+						"recipient":{
+							"id":"' . $recipientId . '"
+							},
+							"message":{
+								"text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal!. if you want subscribe more markets apply for paid version!",
+							"quick_replies": [
+											{
+												"content_type": "text",
+												"title": "PAID",
+												"payload": "paid_version",
+												"image_url": "https://via.placeholder.com/150"
+											},
+											{
+												"content_type": "text",
+												"title": "NO",
+												"payload": "no_subscribe",
+												"image_url": "https://via.placeholder.com/150"
+											}
+										]
+								}
+						}';
+				}
+				Cache::pull('marketBaseQuote');
+		    	Cache::pull('marketExchangeId');
+		    	Cache::pull('marketBaseId');
+		    	Cache::pull('marketBaselastPrice');
             }else{
 				$jsonData = '{
                     "recipient":{
                         "id":"' . $recipientId . '"
                         },
                         "message":{
-							  "text": "You have already applied Maximum (3) markets in free version. if you want subscribe more markets apply for paid version!",
+							  "text": "You have already applied Maximum ('. $max_sub_mrkt[0] .') markets in free version. if you want subscribe more markets apply for paid version!",
                                 "quick_replies": [
 							    	{
 							    		"content_type": "text",
@@ -493,10 +514,7 @@ class fbbotcontroller extends Controller
                             }
                     }';
             }   
-				Cache::pull('marketBaseQuote');
-		    	Cache::pull('marketExchangeId');
-		    	Cache::pull('marketBaseId');
-		    	Cache::pull('marketBaselastPrice');
+			
 		
 			}
 	        /* curl setting to send a json post data */
