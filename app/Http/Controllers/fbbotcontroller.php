@@ -53,9 +53,9 @@ class fbbotcontroller extends Controller
                     }
             }
 		}
-	    $kd = $this->CreateMessageCreative();
+		$kd = $this->CreateMessageCreative($id);
 		$dd = json_encode($kd);
-		  	file_put_contents( "php://stderr","$dd");
+		file_put_contents( "php://stderr","$dd");
         $this->getGrettingText();
         $this->getStarted();  
 	}
@@ -703,36 +703,16 @@ class fbbotcontroller extends Controller
             curl_close($ch);
 	}
 
-	private function CreateMessageCreative(){
+	public function CreateMessageCreative(){
 
-		$url = 'https://graph.facebook.com/v3.2/me/message_creatives?access_token=' . env("PAGE_ACCESS_TOKEN");
-	    /*initialize curl*/
-		$ch = curl_init($url);
-		/*prepare response*/
-		    $jsonData = '{
-		       "messages": [
-					{
-						"dynamic_text": {
-						"text": "Hi, {{first_name}}!",
-						"fallback_text": "Hello friend!"
-						} 
-					},
-					{
-						"dynamic_text": {
-						"text": "Hi, {{first_name}}!",
-						"fallback_text": "Hello friend!"
-						} 
-					}
-				]
-		    }';
-		       /* curl setting to send a json post data */
-		    curl_setopt($ch, CURLOPT_POST, 1);
-		    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-		    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-		   
-		    curl_exec($ch);
-			curl_close($ch);
-			
+		$ch = curl_init('https://graph.facebook.com/v3.2/me/message_creatives?access_token=' . env("PAGE_ACCESS_TOKEN"));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		$res = curl_exec($ch);
+        curl_close($ch);
+		return $res;
+
 	}
 
 
