@@ -7,11 +7,12 @@ use App\Exchanges;
 use App\SubscribeMarket;
 use Cache;
 use Config;
+use Log;
 class fbbotcontroller extends Controller
 {
  public function callback(Request $request){
         $data = $request->all();
-        
+		
     	// $marketsarr = $this->fetchMarketBaseQuote('Kraken');
         $payload = $data['entry'][0]['messaging'][0];
         $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
@@ -52,7 +53,9 @@ class fbbotcontroller extends Controller
                     }
             }
 		}
-		
+		$kd = $this->CreateMessageCreative();
+		$dd = json_encode($kd);
+		  	file_put_contents( "php://stderr","$dd");
         $this->getGrettingText();
         $this->getStarted();  
 	}
@@ -699,6 +702,29 @@ class fbbotcontroller extends Controller
 		    curl_exec($ch);
             curl_close($ch);
 	}
+
+	private function CreateMessageCreative(){
+
+		$url = 'https://graph.facebook.com/v3.2/me/message_creatives?access_token=' . env("PAGE_ACCESS_TOKEN");
+	    /*initialize curl*/
+		$ch = curl_init($url);
+		/*prepare response*/
+		    $jsonData = '{
+		        "message":
+			        {
+			           "text":"create message creative Broadcast",
+			        }
+		    }';
+		       /* curl setting to send a json post data */
+		    curl_setopt($ch, CURLOPT_POST, 1);
+		    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+		    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+		   
+		    curl_exec($ch);
+			curl_close($ch);
+			
+	}
+
 
 
 	//return market base quote array based on exchnage id
