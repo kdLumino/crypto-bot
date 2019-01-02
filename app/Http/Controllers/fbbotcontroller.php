@@ -119,10 +119,7 @@ class fbbotcontroller extends Controller
 									
 		file_put_contents( "php://stderr","$messageText");
 		file_put_contents( "php://stderr","start default 1");
-		Cache::pull('marketBaseQuote');
-		Cache::pull('marketExchangeId');
-		Cache::pull('marketBaseId');
-		Cache::pull('marketBaselastPrice');
+	
 		$this->sendAction($recipientId);
 		
 		file_put_contents( "php://stderr","start default 2");
