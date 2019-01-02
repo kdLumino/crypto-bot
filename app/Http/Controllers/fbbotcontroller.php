@@ -121,7 +121,9 @@ class fbbotcontroller extends Controller
 		Cache::pull('marketBaselastPrice');
 
     	$this->sendAction($recipientId);
-    
+		
+			file_put_contents( "php://stderr","start flow");
+
         $user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
 		$subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
@@ -203,8 +205,7 @@ class fbbotcontroller extends Controller
 					array_push($temparray,$temp);
 					}
 				}
-				$kd = json_encode($temparray);
-				  	file_put_contents( "php://stderr","$kd");
+				
 			    $jsonData = '{
 					    "recipient":{
 					        "id":"' . $recipientId . '"
