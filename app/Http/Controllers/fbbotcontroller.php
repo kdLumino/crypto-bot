@@ -34,8 +34,6 @@ class fbbotcontroller extends Controller
                 }else if($payload['message']['quick_reply']['payload'] == 'no_subscribe'){
                     $this->defaultTextMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
-							
-					  file_put_contents( "php://stderr","start default");
                     $this->defaultTextMessage($id, $payload['postback']['payload']);
                 }else{
                     $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
@@ -117,12 +115,16 @@ class fbbotcontroller extends Controller
         curl_close($ch);
     }
     private function defaultTextMessage($recipientId, $messageText){
+									
+		file_put_contents( "php://stderr","start default 1");
 		Cache::pull('marketBaseQuote');
 		Cache::pull('marketExchangeId');
 		Cache::pull('marketBaseId');
 		Cache::pull('marketBaselastPrice');
-    	$this->sendAction($recipientId);
-    
+		$this->sendAction($recipientId);
+		
+		file_put_contents( "php://stderr","start default 2");
+
         $user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
 		$subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
@@ -137,6 +139,8 @@ class fbbotcontroller extends Controller
 		$temp['title'] = 'Pick Our Exchanges!';
 		$temp['payload'] = 'get_exchange';
 		array_push($temparray,$temp);
+
+		file_put_contents( "php://stderr","start default 3");
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		    /*initialize curl*/
 		    $ch = curl_init($url);
