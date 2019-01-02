@@ -702,7 +702,7 @@ class fbbotcontroller extends Controller
 	}
 
 		//send market paid plan
-	private function test($recipientId){
+	public function test($recipientId){
 		$this->sendAction($recipientId);
     	$user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
