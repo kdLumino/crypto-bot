@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Config;
 use App\Exchanges;
 use App\SubscribeMarket;
+use Log;
 
 class test extends Controller
 {
@@ -13,11 +14,8 @@ class test extends Controller
     public function test(){
 
            $max_sub_mrkt =  Config::get('markets.sub_market_number');
-            $subscribe = Exchanges::where('user_id', '2950844664941572')->get()->toArray();
-
-
-
-     
+           \Log::info($max_sub_mrkt[0]);
+       
 
     }
 }
