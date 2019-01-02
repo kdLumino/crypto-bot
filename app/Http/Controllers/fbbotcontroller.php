@@ -15,7 +15,10 @@ class fbbotcontroller extends Controller
     	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
         $payload = $data['entry'][0]['messaging'][0];
         $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
-  
+
+			$kd = json_encode($payload);
+					  file_put_contents( "php://stderr","$kd");
+					  
         if( !empty($payload) ){
             if( !empty($payload['postback']['payload']) ){
                 if($payload['postback']['payload'] == 'get'){
@@ -114,51 +117,56 @@ class fbbotcontroller extends Controller
         curl_close($ch);
     }
     private function defaultTextMessage($recipientId, $messageText){
-						Cache::pull('marketBaseQuote');
-		    	Cache::pull('marketExchangeId');
-		    	Cache::pull('marketBaseId');
-		    	Cache::pull('marketBaselastPrice');
+		Cache::pull('marketBaseQuote');
+		Cache::pull('marketExchangeId');
+		Cache::pull('marketBaseId');
+		Cache::pull('marketBaselastPrice');
     	$this->sendAction($recipientId);
     
         $user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
-		
+		$subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
+		$temparray = [];
+		if($subscribe){
+			$temp['type'] = 'postback';
+			$temp['title'] = 'See Your Markets!';
+			$temp['payload'] = 'subscribe_list';
+			array_push($temparray,$temp);
+		}
+		$temp['type'] = 'postback';
+		$temp['title'] = 'Pick Our Exchanges!';
+		$temp['payload'] = 'get_exchange';
+		array_push($temparray,$temp);
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		    /*initialize curl*/
 		    $ch = curl_init($url);
-	       		       /*prepare response*/
-			    $jsonData = '{
-			    "recipient":{
-			        "id":"' . $recipientId . '"
-			        },
-			        "message":{
-				    "attachment":{
-				      "type":"template",
-				      "payload":{
-				        "template_type":"generic",
-				        "elements":[
-				           {
-				            "title":"Hey ' . $userdata->first_name . ' Good To see You.!",
-				            "image_url":"https://lz-bot.herokuapp.com/image/bitcoin-falling-760x400.jpg",
-				            "subtitle":"We have the right hat for everyone.",
-				            "default_action": {
-				              "type": "web_url",
-				              "url": "https://lz-bot.herokuapp.com",
-				              "webview_height_ratio": "tall",
-				            },
-				            "buttons":[
-				              {
-				                "type":"postback",
-				                "title":"Pick Our Exchanges!",
-				                "payload":"get_exchange"
-				              }              
-				            ]      
-				          }
-				        ]
-				      }
-				    }
-				  }
-			    }';
+				/*prepare response*/
+				$jsonData = '{
+				"recipient":{
+					"id":"' . $recipientId . '"
+				},
+				"message":{
+				"attachment":{
+					"type":"template",
+					"payload":{
+					"template_type":"generic",
+					"elements":[
+						{
+						"title":"Hey ' . $userdata->first_name . ' Good To see You.!",
+						"image_url":"https://lz-bot.herokuapp.com/image/bitcoin-falling-760x400.jpg",
+						"subtitle":"We have the right hat for everyone.",
+						"default_action": {
+							"type": "web_url",
+							"url": "https://lz-bot.herokuapp.com",
+							"webview_height_ratio": "tall",
+						},
+						"buttons": '.json_encode( $temparray ).'
+						}
+					]
+					}
+				}
+				}
+			}';
 	       
 	        /* curl setting to send a json post data */
 		    curl_setopt($ch, CURLOPT_POST, 1);
@@ -194,7 +202,8 @@ class fbbotcontroller extends Controller
 					array_push($temparray,$temp);
 					}
 				}
-			     $jsonData = '{
+			
+			    $jsonData = '{
 					    "recipient":{
 					        "id":"' . $recipientId . '"
 					        },
@@ -497,8 +506,12 @@ class fbbotcontroller extends Controller
     }
     private function sendWelcomeMessage($recipientId, $messageText)
     {	
-    	 $this->sendAction($recipientId);
-    	 Cache::pull('marketBaseQuote');
+		$this->sendAction($recipientId);
+		 
+    	Cache::pull('marketBaseQuote');
+		Cache::pull('marketExchangeId');
+		Cache::pull('marketBaseId');
+		Cache::pull('marketBaselastPrice');
          // set gretting text array
     	 $grettingtext = array("HI", "HELLO", "HEY", "GET", "START");
     	 //Get user details based on recipient id (nmae,profile,location, etc)
