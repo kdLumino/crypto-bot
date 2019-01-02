@@ -14,10 +14,10 @@ class test extends Controller
     public function test(){
 
            $max_sub_mrkt =  Config::get('markets.sub_market_number');
-           \Log::info($max_sub_mrkt[0]);
+         
 
         $kd = SubscribeMarket::select()->get()->toArray();
-      
+       dd($kd[0]);
         foreach ($kd as $key => $value) {
              dd($value);
         }

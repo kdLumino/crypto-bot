@@ -53,9 +53,9 @@ class fbbotcontroller extends Controller
                     }
             }
 		}
-		$kd = $this->CreateMessageCreative($id);
-		$dd = json_encode($kd);
-		file_put_contents( "php://stderr","$dd");
+
+		// $this->sendSellBuySignals();
+	
         $this->getGrettingText();
         $this->getStarted();  
 	}
@@ -703,16 +703,39 @@ class fbbotcontroller extends Controller
             curl_close($ch);
 	}
 
-	public function CreateMessageCreative(){
+	public function sendSellBuySignals(){
 
-		$ch = curl_init('https://graph.facebook.com/v3.2/me/message_creatives?access_token=' . env("PAGE_ACCESS_TOKEN"));
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-		$res = curl_exec($ch);
-        curl_close($ch);
-		return $res;
+		$marketsymbols = SubscribeMarket::select()->get()->toArray();
+		\Log::info($marketsymbols[0]['user_id']);
 
+        foreach ($marketsymbols as $key => $value) {
+
+             if($value['market_symbol'] == 'XMR/USD'){
+				$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
+				/*initialize curl*/
+				$ch = curl_init($url);
+
+				/*prepare response*/
+			    $jsonData = '{
+			    "recipient":{
+			        "id":"' . $value['user_id'] . '"
+			        },
+			        "message":{
+			            "text":"Sell or Buy signals",
+			        }
+				}';
+				
+				/* curl setting to send a json post data */
+				curl_setopt($ch, CURLOPT_POST, 1);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+			
+				curl_exec($ch);
+				curl_close($ch);
+			
+			 }
+		}
+		
 	}
 
 
