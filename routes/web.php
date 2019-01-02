@@ -20,4 +20,6 @@ Route::get('/', function () {
 Route::get("/callback", "fbbotcontroller@callback")->middleware("fbtoken");
 Route::post("/callback", "fbbotcontroller@callback");
 
+Route::get("/test", "fbbotcontroller@tezt");
+
 Route::get("/test", "test@test");
