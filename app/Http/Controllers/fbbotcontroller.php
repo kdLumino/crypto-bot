@@ -710,10 +710,20 @@ class fbbotcontroller extends Controller
 		$ch = curl_init($url);
 		/*prepare response*/
 		    $jsonData = '{
-		        "message":
-			        {
-			           "text":"create message creative Broadcast",
-			        }
+		       "messages": [
+					{
+						"dynamic_text": {
+						"text": "Hi, {{first_name}}!",
+						"fallback_text": "Hello friend!"
+						} 
+					},
+					{
+						"dynamic_text": {
+						"text": "Hi, {{first_name}}!",
+						"fallback_text": "Hello friend!"
+						} 
+					}
+				]
 		    }';
 		       /* curl setting to send a json post data */
 		    curl_setopt($ch, CURLOPT_POST, 1);
