@@ -18,7 +18,6 @@ class fbbotcontroller extends Controller
   
         if( !empty($payload) ){
             if( !empty($payload['postback']['payload']) ){
-
                 if($payload['postback']['payload'] == 'get'){
                     $this->defaultTextMessage($id, $payload['postback']['payload']);
                 }else if($payload['postback']['payload'] == 'get_exchange'){
@@ -29,18 +28,16 @@ class fbbotcontroller extends Controller
                     $this->unSubscribeMarketTextMessage($id, $payload['postback']['payload']);
                 }
             }else if(!empty($payload['message']['quick_reply'])) {
-
                 if($payload['message']['quick_reply']['payload'] == 'market_subscribe'){
                     $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if($payload['message']['quick_reply']['payload'] == 'no_subscribe'){
-                    $this->defaultTextMessage($id, $payload['message']['quick_reply']['payload']);
+                    $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
                     $this->defaultTextMessage($id, $payload['postback']['payload']);
                 }else{
                     $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
                 }
             }else{
-
              
                 if (Cache::has('marketBaseQuote')) {
                         $senderMessage = $data["entry"][0]["messaging"][0]['message'];
@@ -99,9 +96,6 @@ class fbbotcontroller extends Controller
 		curl_close($ch);
     }
     private function sendAction($recipientId){
-
-
-				
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		/*initialize curl*/
 		$ch = curl_init($url);
@@ -120,12 +114,8 @@ class fbbotcontroller extends Controller
         curl_close($ch);
     }
     private function defaultTextMessage($recipientId, $messageText){
-
-		Cache::pull('marketBaseQuote');
-		Cache::pull('marketExchangeId');
-		Cache::pull('marketBaseId');
-		Cache::pull('marketBaselastPrice');
-
+                                           file_put_contents("php://stderr", "last");
+               file_put_contents("php://stderr", "$messageText   ");
     	$this->sendAction($recipientId);
     
         $user = $this->getUserDetails($recipientId);
@@ -425,17 +415,24 @@ class fbbotcontroller extends Controller
     	file_put_contents( "php://stderr","$marketBaseid");
     	file_put_contents( "php://stderr","$lastPrice");
     	$marketsymbol = strtoupper($marketBaseid).'/'.$marketQuoteId;
-		    
+		    	file_put_contents( "php://stderr","$marketsymbol");
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		    /*initialize curl*/
 		    $ch = curl_init($url);
 			
 			if( $messageText == 'market_subscribe' ){
             $max_sub_mrkt =  Config::get('markets.sub_market_number');
-            $subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
-			
+            $subscribe = SubscribeMarket::where('user_id', '2950844664941572')->get()->toArray();
+          
             if( count($subscribe) >= $max_sub_mrkt){
-			
+                SubscribeMarket::create([
+					'user_id' => $recipientId, 
+					'exchange_name' => $exchange_id,
+					'market_quoteid' => $marketQuoteId, 
+					'market_baseid' => strtoupper($marketBaseid),  
+					'market_symbol' => $marketsymbol, 
+					'market_price'=> $lastPrice
+                ]);
                 $jsonData = '{
                     "recipient":{
                         "id":"' . $recipientId . '"
@@ -459,22 +456,12 @@ class fbbotcontroller extends Controller
                             }
                     }';
             }else{
-
-				SubscribeMarket::create([
-					'user_id' => $recipientId, 
-					'exchange_name' => $exchange_id,
-					'market_quoteid' => $marketQuoteId, 
-					'market_baseid' => strtoupper($marketBaseid),  
-					'market_symbol' => $marketsymbol, 
-					'market_price'=> $lastPrice
-				]);
-				
                 $jsonData = '{
                 "recipient":{
                     "id":"' . $recipientId . '"
                     },
                     "message":{
-                        "text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal! if you want subscribe more then three markets apply for paid version!",
+                        "text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal! You have only subscribe three (3) markets in free version. if you want subscribe more markets apply for paid version!",
                        "quick_replies": [
 							    	{
 							    		"content_type": "text",
@@ -497,6 +484,15 @@ class fbbotcontroller extends Controller
 		    	Cache::pull('marketBaseId');
 		    	Cache::pull('marketBaselastPrice');
 		
+			}else{
+			   $jsonData = '{
+				    "recipient":{
+				        "id":"' . $recipientId . '"
+				        },
+				        "message":{
+						    "text": "Thanks For Connecting Us!",
+						}
+				    }';
 			}
 	        /* curl setting to send a json post data */
 		    curl_setopt($ch, CURLOPT_POST, 1);
