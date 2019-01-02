@@ -34,7 +34,9 @@ class fbbotcontroller extends Controller
                 }else if($payload['message']['quick_reply']['payload'] == 'no_subscribe'){
                     $this->defaultTextMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
-                    $this->defaultTextMessage($id, $payload['postback']['payload']);
+					file_put_contents( "php://stderr","start default ");
+					$this->defaultTextMessage($id, $payload['postback']['payload']);
+					file_put_contents( "php://stderr","start default 0");
                 }else{
                     $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
                 }
