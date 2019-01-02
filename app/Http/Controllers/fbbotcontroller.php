@@ -116,12 +116,12 @@ class fbbotcontroller extends Controller
     }
     private function defaultTextMessage($recipientId, $messageText){
 									
-		file_put_contents( "php://stderr","$messageText");
-		file_put_contents( "php://stderr","start default 1");
-	
+		Cache::pull('marketBaseQuote');
+		Cache::pull('marketExchangeId');
+		Cache::pull('marketBaseId');
+		Cache::pull('marketBaselastPrice');
+				
 		$this->sendAction($recipientId);
-		
-		file_put_contents( "php://stderr","start default 2");
 
         $user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
@@ -437,7 +437,7 @@ class fbbotcontroller extends Controller
             $max_sub_mrkt =  Config::get('markets.sub_market_number');
             $subscribe = SubscribeMarket::where('user_id', '2950844664941572')->get()->toArray();
           
-            if( count($subscribe) >= $max_sub_mrkt){
+            if( count($subscribe) >= $max_sub_mrkt[0]){
                 SubscribeMarket::create([
 					'user_id' => $recipientId, 
 					'exchange_name' => $exchange_id,
@@ -445,13 +445,37 @@ class fbbotcontroller extends Controller
 					'market_baseid' => strtoupper($marketBaseid),  
 					'market_symbol' => $marketsymbol, 
 					'market_price'=> $lastPrice
-                ]);
-                $jsonData = '{
+				]);
+				
+				$jsonData = '{
+					"recipient":{
+						"id":"' . $recipientId . '"
+						},
+						"message":{
+							"text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal!. if you want subscribe more markets apply for paid version!",
+						"quick_replies": [
+										{
+											"content_type": "text",
+											"title": "PAID",
+											"payload": "paid_version",
+											"image_url": "https://via.placeholder.com/150"
+										},
+										{
+											"content_type": "text",
+											"title": "NO",
+											"payload": "no_subscribe",
+											"image_url": "https://via.placeholder.com/150"
+										}
+									]
+							}
+					}';
+            }else{
+				$jsonData = '{
                     "recipient":{
                         "id":"' . $recipientId . '"
                         },
                         "message":{
-							  "text": "Thanks for Connecting Us. You have already applied Maximum (3) markets in free version. if you want subscribe more markets apply for paid version!",
+							  "text": "You have already applied Maximum (3) markets in free version. if you want subscribe more markets apply for paid version!",
                                 "quick_replies": [
 							    	{
 							    		"content_type": "text",
@@ -468,29 +492,6 @@ class fbbotcontroller extends Controller
 							    ]
                             }
                     }';
-            }else{
-                $jsonData = '{
-                "recipient":{
-                    "id":"' . $recipientId . '"
-                    },
-                    "message":{
-                        "text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal!. if you want subscribe more markets apply for paid version!",
-                       "quick_replies": [
-							    	{
-							    		"content_type": "text",
-							    		"title": "PAID",
-							    		"payload": "paid_version",
-							    		"image_url": "https://via.placeholder.com/150"
-							    	},
-							    	{
-							    		"content_type": "text",
-							    		"title": "NO",
-							    		"payload": "no_subscribe",
-							    		"image_url": "https://via.placeholder.com/150"
-							    	}
-							    ]
-                        }
-                }';
             }   
 				Cache::pull('marketBaseQuote');
 		    	Cache::pull('marketExchangeId');
