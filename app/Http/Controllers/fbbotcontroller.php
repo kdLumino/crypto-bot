@@ -186,6 +186,7 @@ class fbbotcontroller extends Controller
 		    $ch = curl_init($url);
 			/* prepare response */
 			if( $messageText == 'subscribe_list'){
+
                 $subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
 				$temparray = [];
 				if($subscribe){
@@ -202,7 +203,9 @@ class fbbotcontroller extends Controller
 					array_push($temparray,$temp);
 					}
 				}
-			     $jsonData = '{
+				$kd = json_encode($temparray);
+				  	file_put_contents( "php://stderr","$kd");
+			    $jsonData = '{
 					    "recipient":{
 					        "id":"' . $recipientId . '"
 					        },
