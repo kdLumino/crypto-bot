@@ -17,6 +17,7 @@ class fbbotcontroller extends Controller
         $payload = $data['entry'][0]['messaging'][0];
         $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
 
+			file_put_contents( "php://stderr","$id");
 			  
         if( !empty($payload) ){
             if( !empty($payload['postback']['payload']) ){
