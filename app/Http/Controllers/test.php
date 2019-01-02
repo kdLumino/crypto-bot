@@ -14,8 +14,8 @@ class test extends Controller
 
            $max_sub_mrkt =  Config::get('markets.sub_market_number');
             $subscribe = SubscribeMarket::where('user_id', '2950844664941572')->get()->toArray();
-
-           if( count($subscribe) <= $max_sub_mrkt[0]){
+     
+           if( 2 <= $max_sub_mrkt[0]){
                dd($max_sub_mrkt);
             }else{
                 dd('dfdf');
