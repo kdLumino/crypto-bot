@@ -100,10 +100,7 @@ class fbbotcontroller extends Controller
     }
     private function sendAction($recipientId){
 
-			Cache::pull('marketBaseQuote');
-		    	Cache::pull('marketExchangeId');
-		    	Cache::pull('marketBaseId');
-				Cache::pull('marketBaselastPrice');
+
 				
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		/*initialize curl*/
@@ -123,6 +120,11 @@ class fbbotcontroller extends Controller
         curl_close($ch);
     }
     private function defaultTextMessage($recipientId, $messageText){
+
+		Cache::pull('marketBaseQuote');
+		Cache::pull('marketExchangeId');
+		Cache::pull('marketBaseId');
+		Cache::pull('marketBaselastPrice');
 
     	$this->sendAction($recipientId);
     
