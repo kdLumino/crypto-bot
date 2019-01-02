@@ -41,7 +41,7 @@ class fbbotcontroller extends Controller
                 }
             }else{
 
-                file_put_contents("php://stderr", "three");
+             
                 if (Cache::has('marketBaseQuote')) {
                         $senderMessage = $data["entry"][0]["messaging"][0]['message'];
                         $this->marketBaseCurrency($id, $senderMessage['text']);
@@ -444,7 +444,7 @@ class fbbotcontroller extends Controller
                         "id":"' . $recipientId . '"
                         },
                         "message":{
-                            "text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal! You have only subscribe three (3) markets in free version. if you want subscribe more markets apply for paid version!",
+							  "text": "Thanks for Connecting Us. You have already applied Maximum (3) markets in free version. if you want subscribe more markets apply for paid version!",
                                 "quick_replies": [
 							    	{
 							    		"content_type": "text",
@@ -467,12 +467,12 @@ class fbbotcontroller extends Controller
                     "id":"' . $recipientId . '"
                     },
                     "message":{
-                        "text": "Thanks for Connecting Us. You have already applied Maximum (3) markets in free version. if you want subscribe more markets apply for paid version!",
+                        "text": "Thanks for Subscribe Our Market. We will Notify You When be Get SELL/BUY Signal! You have only subscribe three (3) markets in free version. if you want subscribe more markets apply for paid version!",
                        "quick_replies": [
 							    	{
 							    		"content_type": "text",
-							    		"title": "PAID",
-							    		"payload": "paid_version",
+							    		"title": "YES",
+							    		"payload": "market_subscribe",
 							    		"image_url": "https://via.placeholder.com/150"
 							    	},
 							    	{
