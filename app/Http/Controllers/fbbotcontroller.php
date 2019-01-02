@@ -53,8 +53,8 @@ class fbbotcontroller extends Controller
                     }
             }
 		}
-	    $this->CreateMessageCreative();
-		$dd = json_encode($data);
+	    $kd = $this->CreateMessageCreative();
+		$dd = json_encode($kd);
 		  	file_put_contents( "php://stderr","$dd");
         $this->getGrettingText();
         $this->getStarted();  
