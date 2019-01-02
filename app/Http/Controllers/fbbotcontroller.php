@@ -121,9 +121,7 @@ class fbbotcontroller extends Controller
 		Cache::pull('marketBaselastPrice');
 
     	$this->sendAction($recipientId);
-		
-			file_put_contents( "php://stderr","start flow");
-
+    
         $user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
 		$subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
