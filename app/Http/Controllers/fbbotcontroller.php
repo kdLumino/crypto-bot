@@ -433,9 +433,7 @@ class fbbotcontroller extends Controller
 			if( $messageText == 'market_subscribe' ){
             $max_sub_mrkt =  Config::get('markets.sub_market_number');
             $subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
-				$kd = json_encode($subscribe);
-				file_put_contents( "php://stderr","$kd");
-
+			
             if( count($subscribe) >= $max_sub_mrkt){
 			
                 $jsonData = '{
