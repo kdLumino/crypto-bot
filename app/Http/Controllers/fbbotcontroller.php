@@ -36,7 +36,6 @@ class fbbotcontroller extends Controller
                 }else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
 					file_put_contents( "php://stderr","start default ");
 					$this->defaultTextMessage($id, $payload['postback']['payload']);
-					file_put_contents( "php://stderr","start default 0");
                 }else{
                     $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
                 }
@@ -118,6 +117,7 @@ class fbbotcontroller extends Controller
     }
     private function defaultTextMessage($recipientId, $messageText){
 									
+		file_put_contents( "php://stderr","$messageText");
 		file_put_contents( "php://stderr","start default 1");
 		Cache::pull('marketBaseQuote');
 		Cache::pull('marketExchangeId');
