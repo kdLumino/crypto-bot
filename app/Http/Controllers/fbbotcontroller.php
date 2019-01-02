@@ -437,7 +437,7 @@ class fbbotcontroller extends Controller
             $max_sub_mrkt =  Config::get('markets.sub_market_number');
             $subscribe = SubscribeMarket::where('user_id', '2950844664941572')->get()->toArray();
           
-            if( count($subscribe) <= $max_sub_mrkt[0]){
+            if( count($subscribe) < $max_sub_mrkt[0]){
                 SubscribeMarket::create([
 					'user_id' => $recipientId, 
 					'exchange_name' => $exchange_id,
