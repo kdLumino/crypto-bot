@@ -13,7 +13,7 @@ class test extends Controller
     public function test(){
 
            $max_sub_mrkt =  Config::get('markets.sub_market_number');
-            $subscribe = SubscribeMarket::where('user_id', '2950844664941572')->get()->toArray();
+            $subscribe = Exchanges::where('user_id', '2950844664941572')->get()->toArray();
 
 
 

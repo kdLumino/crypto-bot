@@ -12,7 +12,7 @@ class fbbotcontroller extends Controller
  public function callback(Request $request){
         $data = $request->all();
         
-    	$marketsarr = $this->fetchMarketBaseQuote('Kraken');
+    	// $marketsarr = $this->fetchMarketBaseQuote('Kraken');
         $payload = $data['entry'][0]['messaging'][0];
         $id      = $data["entry"][0]["messaging"][0]["sender"]["id"];
 
@@ -29,13 +29,16 @@ class fbbotcontroller extends Controller
                     $this->unSubscribeMarketTextMessage($id, $payload['postback']['payload']);
                 }
             }else if(!empty($payload['message']['quick_reply'])) {
+
                 if($payload['message']['quick_reply']['payload'] == 'market_subscribe'){
-                    $this->selectMarketMessage($id, $payload['message']['quick_reply']['payload']);
+                    $this->subscribeMarketMessage($id, $payload['message']['quick_reply']['payload']);
                 }else if($payload['message']['quick_reply']['payload'] == 'no_subscribe'){
                     $this->defaultTextMessage($id, $payload['message']['quick_reply']['payload']);
-                }else if( $payload['message']['quick_reply']['payload'] == 'start_default'){
+                }else if( $payload['message']['quick_reply']['payload'] == 'start_default' ){
 					$this->defaultTextMessage($id, $payload['message']['quick_reply']['payload']);
-                }else{
+                }else if($payload['message']['quick_reply']['payload'] == 'paid_version') {
+					$this->marketPaidPlans($id, $payload['message']['quick_reply']['payload']);
+				}else{
                     $this->marketTextMessage($id, $payload['message']['quick_reply']['payload']);
                 }
             }else{
@@ -51,7 +54,8 @@ class fbbotcontroller extends Controller
         }
         $this->getGrettingText();
         $this->getStarted();  
-    }
+	}
+	// get current user details using "user ID"
     private function getUserDetails($recipientId){
     	$ch = curl_init('https://graph.facebook.com/'.$recipientId.'?access_token='. env("PAGE_ACCESS_TOKEN"));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -60,7 +64,8 @@ class fbbotcontroller extends Controller
 		$res = curl_exec($ch);
         curl_close($ch);
         return $res;
-    }
+	}
+	//set gretting text if user visit first time
     private function getGrettingText(){
 		$url = 'https://graph.facebook.com/v3.2/me/messenger_profile?access_token=' . env("PAGE_ACCESS_TOKEN");
 		/*initialize curl*/
@@ -80,7 +85,8 @@ class fbbotcontroller extends Controller
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 		curl_exec($ch);
 		curl_close($ch);
-    }
+	}
+	//set get started button if user visit first time
     private function getStarted(){
 		$url = 'https://graph.facebook.com/v3.2/me/messenger_profile?access_token=' . env("PAGE_ACCESS_TOKEN");
 		/*initialize curl*/
@@ -95,7 +101,8 @@ class fbbotcontroller extends Controller
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 		curl_exec($ch);
 		curl_close($ch);
-    }
+	}
+	// send typo action for  messenger response
     private function sendAction($recipientId){
     	$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 		/*initialize curl*/
@@ -113,7 +120,8 @@ class fbbotcontroller extends Controller
 	    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 	    curl_exec($ch);
         curl_close($ch);
-    }
+	}
+	//send default/welcome text message's for  eg. "get button payload, no_subscribe quick payload, start_defualt quick reply
     private function defaultTextMessage($recipientId, $messageText){
 									
 		Cache::pull('marketBaseQuote');
@@ -177,7 +185,9 @@ class fbbotcontroller extends Controller
 		   
 		    curl_exec($ch);
             curl_close($ch);
-    }
+	}
+	//send exchange name's like "kraken" from db table "exchanges"
+	//send subscribed market list form db based on current user ID form db table "subscribe_markets"
     private function exchangeTextMessage($recipientId, $messageText){
         $this->sendAction($recipientId);
         $user = $this->getUserDetails($recipientId);
@@ -254,7 +264,10 @@ class fbbotcontroller extends Controller
 		   
 		    curl_exec($ch);
             curl_close($ch);
-    }
+	}
+	//send option pick base currency based on exchnage_id like ("kraken")
+	// enter market base price based on base currency.
+	// set default response for "talk" to bot 
     private function marketTextMessage($recipientId, $messageText){
         
         $this->sendAction($recipientId);
@@ -343,7 +356,8 @@ class fbbotcontroller extends Controller
 		   
 		    curl_exec($ch);
             curl_close($ch);
-    }
+	}
+	//send response based on market baseid and market quoteid
     private function marketBaseCurrency($recipientId, $messageText){
         $this->sendAction($recipientId);
     	$marketQuoteId = Cache::get('marketBaseQuote');
@@ -428,8 +442,9 @@ class fbbotcontroller extends Controller
 		   
 		    curl_exec($ch);
             curl_close($ch);
-    }
-    private function selectMarketMessage($recipientId, $messageText){
+	}
+	//subscribe market and update in db 
+    private function subscribeMarketMessage($recipientId, $messageText){
         $this->sendAction($recipientId);
     	$user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
@@ -521,7 +536,8 @@ class fbbotcontroller extends Controller
 		   
 		    curl_exec($ch);
             curl_close($ch);
-    }
+	}
+	//send welcome message based on user text/input value like ("HI,HEY)
     private function sendWelcomeMessage($recipientId, $messageText)
     {	
 		$this->sendAction($recipientId);
@@ -619,7 +635,8 @@ class fbbotcontroller extends Controller
 		   
 		    curl_exec($ch);
             curl_close($ch);
-    }
+	}
+	//unsubscribe market's based on market symbol amd user id
     private function unSubscribeMarketTextMessage($recipientId, $messageText){
         $this->sendAction($recipientId);
     	$user = $this->getUserDetails($recipientId);
@@ -653,7 +670,34 @@ class fbbotcontroller extends Controller
 		   
 		    curl_exec($ch);
             curl_close($ch);
-    }
+	}
+	//send market paid plan
+	private function marketPaidPlans($recipientId, $messageText){
+		$this->sendAction($recipientId);
+    	$user = $this->getUserDetails($recipientId);
+		$userdata = json_decode($user);
+		$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
+	    /*initialize curl*/
+		$ch = curl_init($url);
+		/*prepare response*/
+		    $jsonData = '{
+		    "recipient":{
+		        "id":"' . $recipientId . '"
+		        },
+		        "message":
+			        {
+			           "text":"Paid option update soon start flow type hi",
+			        }
+		    }';
+		       /* curl setting to send a json post data */
+		    curl_setopt($ch, CURLOPT_POST, 1);
+		    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+		    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+		   
+		    curl_exec($ch);
+            curl_close($ch);
+	}
+	//return market base quote array based on exchnage id
     public function fetchMarketBaseQuote($exchange_id){
     	$exchange_id = 'kraken';
 		if( in_array($exchange_id, \ccxt\Exchange::$exchanges)){
@@ -671,7 +715,8 @@ class fbbotcontroller extends Controller
 	        }
 	        return $marketsArr;
 		}	
-    }
+	}
+	//return market quote aray based on quote id
     public function fetchMarketBaseCurrencyArr($marketquote){
  		$exchange_id = 'kraken';
 		if( in_array($exchange_id, \ccxt\Exchange::$exchanges)){
