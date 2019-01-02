@@ -53,7 +53,6 @@ class fbbotcontroller extends Controller
             }
 		}
 		
-		$this->test($id);
         $this->getGrettingText();
         $this->getStarted();  
 	}
@@ -701,32 +700,6 @@ class fbbotcontroller extends Controller
             curl_close($ch);
 	}
 
-		//send market paid plan
-	public function test($recipientId){
-		$this->sendAction($recipientId);
-    	$user = $this->getUserDetails($recipientId);
-		$userdata = json_decode($user);
-		$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
-	    /*initialize curl*/
-		$ch = curl_init($url);
-		/*prepare response*/
-		    $jsonData = '{
-		    "recipient":{
-		        "id":"' . $recipientId . '"
-		        },
-		        "message":
-			        {
-			           "text":"Paid option update soon start flow type hi",
-			        }
-		    }';
-		       /* curl setting to send a json post data */
-		    curl_setopt($ch, CURLOPT_POST, 1);
-		    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-		    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-		   
-		    curl_exec($ch);
-            curl_close($ch);
-	}
 
 	//return market base quote array based on exchnage id
     public function fetchMarketBaseQuote($exchange_id){
