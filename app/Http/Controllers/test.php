@@ -10,15 +10,41 @@ use Log;
 
 class test extends Controller
 {
-    
+    public function kd(){
+       
+    }
     public function test(){
-      
-        $max_sub_mrkt =  Config::get('markets.sub_market_number');
-         dd( url('/').'/image/call.jpg');
-       $count = SubscribeMarket::where([['user_id','=', '2950844664941572'],['market_symbol','=', 'XMR/USD']])->count();
-        dd($count);
-        foreach ($kd as $key => $value) {
-             dd($value);
+
+        $t=time();
+
+        $exchange_id = 'kraken';
+
+        $exchange_class = '\\ccxt\\' . $exchange_id;
+        $exchange = new $exchange_class ();
+        $markets = $exchange->fetchTickers();
+        foreach ($markets as $key => $value)
+        {	
+            if( $value['symbol'] == 'BTC/GBP' ){
+            // dd($value);   	 
+            }
+        }
+
+        // if ($exchange->has['fetchTrades']) {
+        //     foreach ($exchange->fetch_trades('XMR/USD') as $key => $value) {
+        //         usleep ($exchange->rateLimit * 1000); // usleep wants microseconds
+        //         // dd($value);
+        //         if($value['timestamp'] == $t){
+        //             // dd($value);
+        //         }
+                  
+        //     }
+        // }
+
+        if ($exchange->has['fetchOHLCV'] = 'emulated') {
+
+        $markets = $exchange->fetchTickers();
+          usleep ($exchange->rateLimit * 1000); // usleep wants microseconds
+            dd ($exchange->fetch_ohlcv('XMR/USD'));  
         }
 
     }

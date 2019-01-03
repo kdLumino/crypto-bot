@@ -20,8 +20,11 @@ Route::get('/', function () {
 Route::get("/callback", "fbbotcontroller@callback")->middleware("fbtoken");
 Route::post("/callback", "fbbotcontroller@callback");
 
-
-
 Route::get("/signals", "fbbotcontroller@sendSellBuySignals");
 
 Route::get("/test", "test@test");
+Route::get("/kd", "test@kd");
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
