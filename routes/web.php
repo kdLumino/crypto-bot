@@ -23,3 +23,5 @@ Route::post("/callback", "fbbotcontroller@callback");
 
 
 Route::get("/signals", "fbbotcontroller@sendSellBuySignals");
+
+Route::get("/test", "test@test");

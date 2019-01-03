@@ -55,7 +55,7 @@ class fbbotcontroller extends Controller
             }
 		}
 
-		// $this->sendSellBuySignals();
+		 $this->sendSellBuySignals();
 	
         $this->getGrettingText();
         $this->getStarted();  
@@ -394,7 +394,7 @@ class fbbotcontroller extends Controller
 			        Cache::put('marketBaselastPrice', $marketPrice, 25);
 		        }
 					   
-				$count = SubscribeMarket::where('market_symbol', '=' ,$marketsymbol)->count();
+				$count = SubscribeMarket::where([['user_id','=', $recipientId],['market_symbol','=', $marketsymbol]])->count();
 				if($count == 1) {
 
 					$jsonData = '{
