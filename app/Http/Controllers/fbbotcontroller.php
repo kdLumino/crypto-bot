@@ -700,42 +700,26 @@ class fbbotcontroller extends Controller
                                     "top_element_style": "compact",
                                     "elements": [
                                         {
-                                        "title":"Your Selected Exchnage is kraken and its Market symbol is ADA/ETH ",
-                                        "subtitle":"Your Market Last Price is 0.00029",
+                                        "title":"Buy our plan for 50 markets subscriptions",
+                                        "subtitle":"You need to pay $50",
                                             "buttons":[
-                                               {
-												"type":"payment",
-												"title":"But Button",
-												"payload":"DEVELOPER_DEFINED_PAYLOAD",
-													"payment_summary":{
-													"currency":"USD",
-													"payment_type":"FIXED_AMOUNT",
-													"is_test_payment" : true, 
-													"merchant_name":"My Fake Business",
-														"requested_user_info":[
-															"shipping_address",
-															"contact_name",
-															"contact_phone",
-															"contact_email"
-														],
-														"price_list":[
-															{
-															"label":"subtotal",
-															"amount":"12.75"
-															}
-														]
-													}
-												}
+                                                {
+                                               "type":"web_url",
+												"url":"https://crypto-chat-bot.herokuapp.com/payment",
+												"title":"BUY",
+												"webview_height_ratio": "full"
+                                                }
                                             ]
                                         },
                                         {
-                                        "title":"Your Selected Exchnage is kraken and its Market symbol is ADA/ETH ",
-                                        "subtitle":"Your Market Last Price is 0.00029",
+                                        "title":"Buy our plan for 100 markets subscriptions",
+                                        "subtitle":"You need to pay $100",
                                             "buttons":[
                                                 {
-                                                "type":"postback",
-                                                "title":"UnSubscribe Market",
-                                                "payload":"ADA/ETH"
+                                               "type":"web_url",
+												"url":"https://crypto-chat-bot.herokuapp.com/payment",
+												"title":"BUY",
+												"webview_height_ratio": "full"
                                                 }
                                             ]
                                         }
