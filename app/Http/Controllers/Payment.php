@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests;
 use Illuminate\Http\Request;
 
 class Payment extends Controller
@@ -16,8 +17,10 @@ class Payment extends Controller
         $this->middleware('auth');
     }
 
-    public function index(){
+    public function index(Request $request){
 
+        $data = $request->all();
+        dd($data);
          return view('payment');
 
     }
