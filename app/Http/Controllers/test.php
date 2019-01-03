@@ -44,48 +44,6 @@ class test extends Controller
 						    }
 						}
                     }';
-
-                    {
-                        "recipient":{
-                            "id":"2200772469954510"
-                        },
-                        "message": {
-                            "attachment": {
-                                "type": "template",
-                                "payload": {
-                                    "template_type": "list",
-                                    "top_element_style": "compact",
-                                    "elements": [
-                                        {
-                                        "title":"Your Selected Exchnage is kraken and its Market symbol is ADA/ETH ",
-                                        "subtitle":"Your Market Last Price is 0.00029",
-                                            "buttons":[
-                                                {
-                                                "type":"postback",
-                                                "title":"UnSubscribe Market",
-                                                "payload":"ADA/ETH"
-                                                }
-                                            ]
-                                        }
-                                        {
-                                        "title":"Your Selected Exchnage is kraken and its Market symbol is ADA/ETH ",
-                                        "subtitle":"Your Market Last Price is 0.00029",
-                                            "buttons":[
-                                                {
-                                                "type":"postback",
-                                                "title":"UnSubscribe Market",
-                                                "payload":"ADA/ETH"
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                    
-                                }
-                            }
-                        }   
-                    }"
-
-                    dd(json_encode($jsonData));
                     
     }
     public function test(){
