@@ -55,7 +55,7 @@ class fbbotcontroller extends Controller
             }
 		}
 
-		 $this->sendSellBuySignals();
+		// $this->sendSellBuySignals();
 	
         $this->getGrettingText();
         $this->getStarted();  
