@@ -27,5 +27,5 @@ Route::get("/kd", "test@kd");
 
 Auth::routes();
 
-Route::get('/payment', 'Payment@index')->name('payment');
+Route::post('/payment', 'Payment@index')->name('payment');
 // Route::get('/home', 'HomeController@index')->name('home');
