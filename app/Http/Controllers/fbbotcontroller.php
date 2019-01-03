@@ -55,7 +55,7 @@ class fbbotcontroller extends Controller
             }
 		}
 
-		// $this->sendSellBuySignals();
+		//  $this->sendSellBuySignals();
 	
         $this->getGrettingText();
         $this->getStarted();  
@@ -168,7 +168,7 @@ class fbbotcontroller extends Controller
 					"elements":[
 						{
 						"title":"Hey ' . $userdata->first_name . ' Good To see You.!",
-						"image_url": '. url('/').'/image/bitcoin-falling-760x400.jpg' .',
+						"image_url":"https://lz-bot.herokuapp.com/image/bitcoin-falling-760x400.jpg",
 						"subtitle":"We have the right hat for everyone.",
 						"default_action": {
 							"type": "web_url",
@@ -589,7 +589,7 @@ class fbbotcontroller extends Controller
 				        "elements":[
 				           {
 				            "title":"Hey ' . $userdata->first_name . ' Good To see You.!",
-				            "image_url":'. url('/').'/image/bitcoin-falling-760x400.jpg' .',
+				            "image_url":"https://lz-bot.herokuapp.com/image/bitcoin-falling-760x400.jpg",
 				            "subtitle":"We have the right hat for everyone.",
 				            "default_action": {
 				              "type": "web_url",
@@ -617,7 +617,7 @@ class fbbotcontroller extends Controller
 						        "content_type":"text",
 						        "title":"Start",
 						        "payload":"start_default",
-						        "image_url":'. url('/').'/image/talktohuman.png' .',
+						        "image_url":"https://lz-bot.herokuapp.com/image/talktohuman.png"
 						      }
 						    ]
 				        }
@@ -663,7 +663,7 @@ class fbbotcontroller extends Controller
 					        "content_type":"text",
 					        "title":"Start",
 					        "payload":"start_default",
-					        "image_url":'. url('/').'/image/talktohuman.png' .',
+					        "image_url":"https://lz-bot.herokuapp.com/image/talktohuman.png"
 					      }
 					    ]
 			        }
