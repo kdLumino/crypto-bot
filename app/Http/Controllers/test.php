@@ -11,7 +11,82 @@ use Log;
 class test extends Controller
 {
     public function kd(){
-       
+                        $recipientId = 2200772469954510;
+                     $subscribe = SubscribeMarket::where('user_id', $recipientId)->get()->toArray();
+				$temparray = [];
+				if($subscribe){
+					foreach ($subscribe as $key => $value) {
+					$temp['title'] = 'Your Selected Exchnage is '.$value['exchange_name'].' and its Market symbol is '.$value['market_symbol'].' ';
+					$temp['subtitle'] = 'Your Market Last Price is '.$value['market_price'].' ';
+					$btn['button']['type'] = "postback";
+					$btn['button']['title'] = 'UnSubscribe Market';
+					$btn['button']['payload'] = $value['market_symbol'];
+					$button=[];
+					array_push($button,$btn['button']);
+					//array_push(,$button);
+					$temp['buttons'] = $button;
+					array_push($temparray,$temp);
+					}
+				}
+			
+			    $jsonData = '{
+					    "recipient":{
+					        "id":"' . $recipientId . '"
+					        },
+					      "message": {
+						    "attachment": {
+						        "type": "template",
+						        "payload": {
+						            "template_type": "list",
+						            "top_element_style": "compact",
+						            "elements": '.json_encode($temparray).'
+						        }
+						    }
+						}
+                    }';
+
+                    {
+                        "recipient":{
+                            "id":"2200772469954510"
+                        },
+                        "message": {
+                            "attachment": {
+                                "type": "template",
+                                "payload": {
+                                    "template_type": "list",
+                                    "top_element_style": "compact",
+                                    "elements": [
+                                        {
+                                        "title":"Your Selected Exchnage is kraken and its Market symbol is ADA/ETH ",
+                                        "subtitle":"Your Market Last Price is 0.00029",
+                                            "buttons":[
+                                                {
+                                                "type":"postback",
+                                                "title":"UnSubscribe Market",
+                                                "payload":"ADA/ETH"
+                                                }
+                                            ]
+                                        }
+                                        {
+                                        "title":"Your Selected Exchnage is kraken and its Market symbol is ADA/ETH ",
+                                        "subtitle":"Your Market Last Price is 0.00029",
+                                            "buttons":[
+                                                {
+                                                "type":"postback",
+                                                "title":"UnSubscribe Market",
+                                                "payload":"ADA/ETH"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                    
+                                }
+                            }
+                        }   
+                    }"
+
+                    dd(json_encode($jsonData));
+                    
     }
     public function test(){
 

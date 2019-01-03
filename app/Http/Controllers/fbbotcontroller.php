@@ -679,6 +679,7 @@ class fbbotcontroller extends Controller
 
 	//send market paid plan
 	private function marketPaidPlans($recipientId, $messageText){
+		
 		$this->sendAction($recipientId);
     	$user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);
@@ -686,15 +687,46 @@ class fbbotcontroller extends Controller
 	    /*initialize curl*/
 		$ch = curl_init($url);
 		/*prepare response*/
-		    $jsonData = '{
-		    "recipient":{
-		        "id":"' . $recipientId . '"
-		        },
-		        "message":
-			        {
-			           "text":"Paid option update soon start flow type hi",
-			        }
-		    }';
+					/*prepare response*/
+			    $jsonData = '{
+                        "recipient":{
+                            "id":"' .$recipientId. '"
+						},
+                        "message": {
+                            "attachment": {
+                                "type": "template",
+                                "payload": {
+                                    "template_type": "list",
+                                    "top_element_style": "compact",
+                                    "elements": [
+                                        {
+                                        "title":"Your Selected Exchnage is kraken and its Market symbol is ADA/ETH ",
+                                        "subtitle":"Your Market Last Price is 0.00029",
+                                            "buttons":[
+                                                {
+                                                "type":"postback",
+                                                "title":"UnSubscribe Market",
+                                                "payload":"ADA/ETH"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                        "title":"Your Selected Exchnage is kraken and its Market symbol is ADA/ETH ",
+                                        "subtitle":"Your Market Last Price is 0.00029",
+                                            "buttons":[
+                                                {
+                                                "type":"postback",
+                                                "title":"UnSubscribe Market",
+                                                "payload":"ADA/ETH"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                    
+                                }
+                            }
+                        }   
+                    }';
 		       /* curl setting to send a json post data */
 		    curl_setopt($ch, CURLOPT_POST, 1);
 		    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
