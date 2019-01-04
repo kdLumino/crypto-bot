@@ -27,6 +27,7 @@ Route::get("/kd", "test@kd");
 
 Auth::routes();
 
-Route::get('/payment', 'Payment@index')->name('payment');
-Route::post('/payStripe', 'Payment@stripe')->name('payStripe');
-// Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/payment', 'PaymentController@index')->name('payment');
+Route::post('/payStripe', 'PaymentController@stripe')->name('payStripe');
+Route::post('/paywithpaypal', 'PaymentController@payWithpaypal')->name('paywithpaypal');
+Route::get('/status', 'PaymentController@getPaymentStatus')->name('status');
