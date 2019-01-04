@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use Stripe\Stripe;
+use Stripe\Charge;
 
 class Payment extends Controller
 {   
@@ -17,11 +19,24 @@ class Payment extends Controller
         $this->middleware('auth');
     }
 
-    public function index(Request $request){
+    public function index(){
 
-        $data = $request->all();
-        dd($data);
          return view('payment');
+    }
 
+    public function stripe(Request $request)
+    {
+      Stripe::setApiKey(config('services.stripe.secret'));
+ 
+        $token = request('stripeToken');
+ 
+        $charge = Charge::create([
+            'amount' => 1000,
+            'currency' => 'usd',
+            'description' => 'Test Book',
+            'source' => $token,
+        ]);
+ 
+        return 'Payment Success!';
     }
 }
