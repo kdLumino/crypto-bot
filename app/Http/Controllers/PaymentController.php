@@ -159,7 +159,7 @@ class PaymentController extends Controller
         if ($result->getState() == 'approved') {
          
         $transaction_id = $result->transactions[0]->related_resources[0]->sale->id;
-               
+        $fb_id = Cache::get('fb_user_id');   
         Payments::create([
                 'auth_user_id' => Auth::user()->id, 
                 'fb_user_id' => $fb_id,
