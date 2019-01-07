@@ -680,10 +680,10 @@ class fbbotcontroller extends Controller
 	//send market paid plan
 	private function marketPaidPlans($recipientId, $messageText){
 		
-		Cache::put('fb_user_id');
-		$this->sendAction($recipientId);
-    	$user = $this->getUserDetails($recipientId);
-		$userdata = json_decode($user);
+		Cache::put('fb_user_id', $recipientId);
+		// $this->sendAction($recipientId);
+    	// $user = $this->getUserDetails($recipientId);
+		// $userdata = json_decode($user);
 		$url = 'https://graph.facebook.com/v3.2/me/messages?access_token=' . env("PAGE_ACCESS_TOKEN");
 	    /*initialize curl*/
 		$ch = curl_init($url);
