@@ -707,7 +707,7 @@ class fbbotcontroller extends Controller
                                             "buttons":[
                                                 {
                                                "type":"web_url",
-												"url":"https://crypto-chat-bot.herokuapp.com/payment",
+												"url":"http://crypto-chat-bot.herokuapp.com/payment",
 												"title":"BUY",
 												"webview_height_ratio": "full"
                                                 }
@@ -719,7 +719,7 @@ class fbbotcontroller extends Controller
                                             "buttons":[
                                                 {
                                                "type":"web_url",
-												"url":"https://crypto-chat-bot.herokuapp.com/payment",
+												"url":"http://crypto-chat-bot.herokuapp.com/payment",
 												"title":"BUY",
 												"webview_height_ratio": "full"
                                                 }

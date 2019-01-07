@@ -20,8 +20,8 @@
         <div class='col-sm-6 form-group required'>
             <select name="market-plan" id="mrktplans" class="form-control">
                 <option value="default">Default</option>
-                <option value="50">Pay $50 for 50 Market Subscription</option>
-                <option value="100">Pay $100 for 100 Market Subscription</option>
+                <option value="50"  data-item="50">Pay $50 for 50 Market Subscription</option>
+                <option value="100"  data-item="100">Pay $100 for 100 Market Subscription</option>
             </select>
         </div>
     </div>
@@ -42,7 +42,7 @@
 
 <div class="payment-method">
 <p>Select Your Payment Method!!!</p>
-<button class="strip-btn button"><span>Pay Using Stripe </span></button>
+<!-- <button class="strip-btn button"><span>Pay Using Stripe </span></button> -->
 <button class="paypal-btn button"><span>Pay Using PayPal </span></button>
 </div>
 
@@ -51,16 +51,26 @@
 
     <div class='form-row'>
         <div class='col-sm-6 form-group required'>
-            <label class="control-label w3-text-blue"><b>Enter Amount</b></label>
-            <input class="form-control w3-input w3-border" name="amount" id="paypal-amount" type="text">
+            <label class="control-label w3-text-blue"><b>Plan Price</b></label>
+            <input class="form-control w3-input w3-border" name="amount_hidden" id="paypal-amount-hidden" type="hidden" readonly="readonly">
+            <input class="form-control w3-input w3-border" name="amount" id="paypal-amount" type="text" readonly="readonly">
         </div>
     </div>
+
+        <div class='form-row'>
+        <div class='col-sm-6 form-group required'>
+            <label class="control-label w3-text-blue"><b>No. Of Markets</b></label>
+            <input class="form-control w3-input w3-border" name="items" id="items"  type="text" readonly="readonly">
+        </div>
+    </div>
+
     <div class='form-row'>
         <div class='col-sm-6 form-group required'>
             <label class="control-label w3-text-blue"><b>Your Plan Description</b></label>
             <input class="form-control w3-input w3-border" name="market_plan" id="market-plan"  type="text" readonly="readonly">
         </div>
     </div>
+
     <div class='form-row'>
         <div class='col-sm-6 form-group required'>
          <button class='w3-btn w3-blue form-control btn btn-primary submit-button'
@@ -148,7 +158,9 @@ setTimeout(function() {
         }else{
               $(".payment-method").show();
               $(".amount").text('$' +$(this).val());
-              $("#paypal-amount").val($(this).val());
+              $("#paypal-amount-hidden").val($(this).val());
+              $("#paypal-amount").val('$' + $(this).val());
+              $("#items").val($(this).find('option:selected').attr('data-item'));
               $("#market-plan").val($(this).find('option:selected').text());
        
         }

@@ -9,7 +9,7 @@ use URL;
 use Session;
 use Redirect;
 use Illuminate\Support\Facades\Input;
-use Payments;
+use App\Payments;
 use Auth;
 use Cache;
 use Config;
@@ -81,25 +81,23 @@ class PaymentController extends Controller
 
    public function payWithpaypal(Request $request)
     {   
-            $fb_id = Cache::get('fb_user_id');
-               dd($fb_id);
-
+        // dd($request->get('items'));
         $payer = new Payer();
                 $payer->setPaymentMethod('paypal');
         $item_1 = new Item();
-        $item_1->setName($request->get('market_plan')) /** item name **/
+        $item_1->setName($request->get('items') . 'markets') /** item name **/
                     ->setCurrency('USD')
                     ->setQuantity(1)
-                    ->setPrice($request->get('amount')); /** unit price **/
+                    ->setPrice($request->get('amount_hidden')); /** unit price **/
         $item_list = new ItemList();
                 $item_list->setItems(array($item_1));
         $amount = new Amount();
                 $amount->setCurrency('USD')
-                    ->setTotal($request->get('amount'));
+                    ->setTotal($request->get('amount_hidden'));
         $transaction = new Transaction();
                 $transaction->setAmount($amount)
                     ->setItemList($item_list)
-                    ->setDescription('Your transaction description');
+                    ->setDescription($request->get('market_plan'));
         $redirect_urls = new RedirectUrls();
                 $redirect_urls->setReturnUrl(URL::route('status')) /** Specify return URL **/
                     ->setCancelUrl(URL::route('status'));
@@ -141,7 +139,6 @@ class PaymentController extends Controller
     public function getPaymentStatus()
     {
 
-
         /** Get the payment ID before session clear **/
                 $payment_id = Session::get('paypal_payment_id');
         /** clear the session payment ID **/
@@ -160,14 +157,17 @@ class PaymentController extends Controller
         $result = $payment->execute($execution, $this->_api_context);
       
         if ($result->getState() == 'approved') {
-                     
+         
+        $transaction_id = $result->transactions[0]->related_resources[0]->sale->id;
+               
         Payments::create([
-                'auth_user_id' => $recipientId, 
-                'fb_user_id' => $exchange_id,
-                'transaction_id' => $marketQuoteId, 
-                'transaction_price' => strtoupper($marketBaseid),  
-                'plan_name' => $marketsymbol, 
-                'payment_method'=> $lastPrice
+                'auth_user_id' => Auth::user()->id, 
+                'fb_user_id' => $fb_id,
+                'transaction_id' => $transaction_id, 
+                'payment_id' => $result->id, 
+                'transaction_price' => $result->transactions[0]->amount->total,  
+                'plan_name' => $result->transactions[0]->item_list->items[0]->name, 
+                'payment_method'=> 'paypal'
         ]);
                                 
         Session::flash('success', 'Payment success');
