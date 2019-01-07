@@ -9,7 +9,7 @@ use URL;
 use Session;
 use Redirect;
 use Illuminate\Support\Facades\Input;
-use App\Payments;
+use App\planPayments;
 use Auth;
 use Cache;
 use Config;
@@ -160,7 +160,7 @@ class PaymentController extends Controller
          
         $transaction_id = $result->transactions[0]->related_resources[0]->sale->id;
         $fb_id = Cache::get('fb_user_id');   
-        Payments::create([
+        planPayments::create([
                 'auth_user_id' => Auth::user()->id, 
                 'fb_user_id' => $fb_id,
                 'transaction_id' => $transaction_id, 
