@@ -680,6 +680,7 @@ class fbbotcontroller extends Controller
 	//send market paid plan
 	private function marketPaidPlans($recipientId, $messageText){
 		
+		Cache::put('fb_user_id');
 		$this->sendAction($recipientId);
     	$user = $this->getUserDetails($recipientId);
 		$userdata = json_decode($user);

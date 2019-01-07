@@ -9,6 +9,10 @@ use URL;
 use Session;
 use Redirect;
 use Illuminate\Support\Facades\Input;
+use Payments;
+use Auth;
+use Cache;
+use Config;
 
 /** Use Stripe Payment Class **/
 use Stripe\Stripe;
@@ -76,7 +80,9 @@ class PaymentController extends Controller
     }
 
    public function payWithpaypal(Request $request)
-    {
+    {   
+            $fb_id = Cache::get('fb_user_id');
+               dd($fb_id);
 
         $payer = new Payer();
                 $payer->setPaymentMethod('paypal');
@@ -154,6 +160,16 @@ class PaymentController extends Controller
         $result = $payment->execute($execution, $this->_api_context);
       
         if ($result->getState() == 'approved') {
+                     
+        Payments::create([
+                'auth_user_id' => $recipientId, 
+                'fb_user_id' => $exchange_id,
+                'transaction_id' => $marketQuoteId, 
+                'transaction_price' => strtoupper($marketBaseid),  
+                'plan_name' => $marketsymbol, 
+                'payment_method'=> $lastPrice
+        ]);
+                                
         Session::flash('success', 'Payment success');
                     return Redirect::route('payment');
         }
